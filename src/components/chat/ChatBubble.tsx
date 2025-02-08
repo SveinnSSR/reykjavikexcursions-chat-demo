@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, X, Send, ChevronUp } from 'lucide-react';
+import { MessageCircle, Send, ChevronUp } from 'lucide-react';
+import Image from 'next/image';
 
 const ChatBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,7 @@ const ChatBubble = () => {
         }
       ]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]); // Added messages.length to dependencies
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,11 +69,14 @@ const ChatBubble = () => {
           {/* Header */}
           <div className="bg-[#595d4c] text-white p-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <img 
-                src="/images/logo.png" 
-                alt="RE Logo" 
-                className="h-8 w-8 rounded-full bg-white p-1"
-              />
+              <div className="relative h-8 w-8">
+                <Image 
+                  src="/images/logo.png" 
+                  alt="RE Logo" 
+                  fill
+                  className="rounded-full bg-white p-1 object-contain"
+                />
+              </div>
               <div>
                 <h3 className="font-medium">Reykjavík Excursions</h3>
                 <p className="text-xs text-gray-200">Online</p>
