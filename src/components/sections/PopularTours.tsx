@@ -84,13 +84,6 @@ const PopularTours = () => {
                   fill
                   className="object-cover"
                 />
-                {/* Special Offer Badge */}
-                <div className="absolute top-4 right-4 bg-teal-500 text-white p-2 rounded transform rotate-6">
-                  <div className="text-sm font-bold">SPECIAL</div>
-                  <div className="text-sm font-bold">OFFER</div>
-                  <div className="text-xl font-bold">15%</div>
-                  <div className="text-sm font-bold">OFF</div>
-                </div>
               </div>
               
               {/* Content */}
