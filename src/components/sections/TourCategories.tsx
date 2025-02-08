@@ -12,53 +12,53 @@ const categories = [
   },
   {
     id: 2,
+    name: 'Golden Circle',
+    image: '/images/categories/golden-circle.webp',
+  },
+  {
+    id: 3,
     name: 'Adventure Bus',
     image: '/images/categories/adventure-bus.webp',
   },
   {
-    id: 3,
+    id: 4,
     name: 'Volcano Tours',
     image: '/images/categories/volcano-tours.webp',
   },
   {
-    id: 4,
+    id: 5,
     name: 'Hop On Hop Off Sightseeing',
     image: '/images/categories/hop-on-hop-off.webp',
   },
   {
-    id: 5,
+    id: 6,
     name: 'Northern Lights',
     image: '/images/categories/northern-lights.webp',
   },
   {
-    id: 6,
+    id: 7,
     name: 'Hot Springs, Spas & Lagoons',
     image: '/images/categories/hot-springs.webp',
   },
   {
-    id: 7,
+    id: 8,
     name: 'Small Group',
     image: '/images/categories/small-group.webp',
   },
   {
-    id: 8,
+    id: 9,
     name: 'Glacier & Ice Cave Tours',
     image: '/images/categories/glacier-tours.webp',
   },
   {
-    id: 9,
+    id: 10,
     name: 'Super Jeep Tours',
     image: '/images/categories/super-jeep.webp',
   },
   {
-    id: 10,
+    id: 11,
     name: 'Blue Lagoon',
     image: '/images/categories/blue-lagoon.webp',
-  },
-  {
-    id: 11,
-    name: 'Golden Circle',
-    image: '/images/categories/golden-circle.webp',
   }
 ];
 
