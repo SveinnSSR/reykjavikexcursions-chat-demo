@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, ChevronUp } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
 const ChatBubble = () => {
