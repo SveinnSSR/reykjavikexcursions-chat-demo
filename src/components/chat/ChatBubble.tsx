@@ -55,7 +55,7 @@ const ChatBubble = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-[#595d4c] hover:bg-[#4a4d3f] text-white rounded-full px-6 py-3 shadow-lg transition-all duration-200 flex items-center gap-2"
+          className="bg-[#4AA19E] hover:bg-[#3a8f8c] text-white rounded-full px-6 py-3 shadow-lg transition-all duration-200 flex items-center gap-2"
         >
           <MessageCircle size={20} />
           <span className="text-sm font-medium">Chat with us</span>
@@ -66,7 +66,7 @@ const ChatBubble = () => {
       {isOpen && (
         <div className="bg-white rounded-3xl shadow-2xl w-[400px] flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-[#595d4c] text-white p-4 flex justify-between items-center">
+          <div className="bg-[#003976] text-white p-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="relative h-8 w-8">
                 <Image 
@@ -83,7 +83,7 @@ const ChatBubble = () => {
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="hover:bg-[#4a4d3f] p-2 rounded-full transition-colors"
+              className="hover:bg-[#004a99] p-2 rounded-full transition-colors"
             >
               <ChevronUp size={20} />
             </button>
@@ -97,14 +97,14 @@ const ChatBubble = () => {
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.type === 'bot' && (
-                  <div className="h-8 w-8 rounded-full bg-[#595d4c] flex items-center justify-center text-white mr-2 flex-shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-[#4AA19E] flex items-center justify-center text-white mr-2 flex-shrink-0">
                     RE
                   </div>
                 )}
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                     message.type === 'user'
-                      ? 'bg-[#595d4c] text-white ml-4'
+                      ? 'bg-[#4AA19E] text-white ml-4'
                       : 'bg-white text-gray-800 shadow-sm'
                   }`}
                 >
@@ -133,12 +133,12 @@ const ChatBubble = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#595d4c]"
+                className="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4AA19E]"
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-[#595d4c] hover:bg-[#4a4d3f] text-white rounded-full px-6 h-10 flex items-center justify-center disabled:opacity-50 transition-colors text-sm font-medium"
+                className="bg-[#4AA19E] hover:bg-[#3a8f8c] text-white rounded-full px-6 h-10 flex items-center justify-center disabled:opacity-50 transition-colors text-sm font-medium"
               >
                 Send
               </button>
