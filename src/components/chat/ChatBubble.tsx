@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Send, ChevronUp } from 'lucide-react';
+import { MessageCircle, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
 const ChatBubble = () => {
@@ -11,7 +11,6 @@ const ChatBubble = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Add initial greeting when chat is opened
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([
@@ -21,7 +20,7 @@ const ChatBubble = () => {
         }
       ]);
     }
-  }, [isOpen, messages.length]); // Added messages.length to dependencies
+  }, [isOpen, messages.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +55,7 @@ const ChatBubble = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-teal-500 hover:bg-teal-600 text-white rounded-full px-6 py-3 shadow-lg transition-all duration-200 flex items-center gap-2"
+          className="bg-[#595d4c] hover:bg-[#4a4d3f] text-white rounded-full px-6 py-3 shadow-lg transition-all duration-200 flex items-center gap-2"
         >
           <MessageCircle size={20} />
           <span className="text-sm font-medium">Chat with us</span>
@@ -65,7 +64,7 @@ const ChatBubble = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="bg-white rounded-2xl shadow-2xl w-[400px] flex flex-col overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-2xl w-[400px] flex flex-col overflow-hidden">
           {/* Header */}
           <div className="bg-[#595d4c] text-white p-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -79,7 +78,7 @@ const ChatBubble = () => {
               </div>
               <div>
                 <h3 className="font-medium">Reykjavík Excursions</h3>
-                <p className="text-xs text-gray-200">Online</p>
+                <p className="text-xs opacity-80">Online</p>
               </div>
             </div>
             <button 
@@ -98,14 +97,14 @@ const ChatBubble = () => {
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.type === 'bot' && (
-                  <div className="h-8 w-8 rounded-full bg-teal-500 flex items-center justify-center text-white mr-2 flex-shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-[#595d4c] flex items-center justify-center text-white mr-2 flex-shrink-0">
                     RE
                   </div>
                 )}
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                     message.type === 'user'
-                      ? 'bg-teal-500 text-white ml-4'
+                      ? 'bg-[#595d4c] text-white ml-4'
                       : 'bg-white text-gray-800 shadow-sm'
                   }`}
                 >
@@ -134,14 +133,14 @@ const ChatBubble = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#595d4c]"
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-teal-500 hover:bg-teal-600 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center disabled:opacity-50 transition-colors"
+                className="bg-[#595d4c] hover:bg-[#4a4d3f] text-white rounded-full px-6 h-10 flex items-center justify-center disabled:opacity-50 transition-colors text-sm font-medium"
               >
-                <Send size={18} />
+                Send
               </button>
             </div>
           </form>
