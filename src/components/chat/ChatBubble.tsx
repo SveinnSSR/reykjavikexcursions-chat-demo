@@ -31,11 +31,11 @@ const ChatBubble = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://reykjavikexcursions-chat-2025.vercel.app/chat', {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': process.env.NEXT_PUBLIC_CHAT_CLIENT_ID || '',
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
         },
         body: JSON.stringify({ message: input }),
       });
