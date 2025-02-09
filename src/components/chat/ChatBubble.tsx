@@ -26,6 +26,9 @@ const ChatBubble = () => {
     e.preventDefault();
     if (!input.trim()) return;
 
+    console.log('Making request to:', process.env.NEXT_PUBLIC_API_URL + '/chat');
+    console.log('Using API key:', process.env.NEXT_PUBLIC_API_KEY);
+
     setMessages(prev => [...prev, { type: 'user', content: input }]);
     setInput('');
     setIsLoading(true);
@@ -40,10 +43,16 @@ const ChatBubble = () => {
         body: JSON.stringify({ message: input }),
       });
 
+      console.log('Response status:', response.status);
+
       const data = await response.json();
       setMessages(prev => [...prev, { type: 'bot', content: data.message }]);
     } catch (error) {
       console.error('Error:', error);
+        // Add more detailed error logging
+        if (error instanceof Error) {
+            console.error('Error details:', error.message);
+        }
     } finally {
       setIsLoading(false);
     }
