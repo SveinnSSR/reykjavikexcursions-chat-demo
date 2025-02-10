@@ -16,7 +16,7 @@ const ChatBubble = () => {
       setMessages([
         {
           type: 'bot',
-          content: "Hello! I'm your AI chatbot at Reykjavík Excursions. I can help you with tour information, bookings, and schedules. What would you like to know? 😊"
+          content: "Hello! I'm your AI assistant at Reykjavík Excursions. I can help you with Flybus airport transfers, schedules, and bookings. What would you like to know? 😊"
         }
       ]);
     }
