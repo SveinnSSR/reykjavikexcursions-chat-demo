@@ -10,6 +10,7 @@ const ChatBubble = () => {
   const [messages, setMessages] = useState<Array<{type: 'user' | 'bot', content: string}>>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -28,6 +29,7 @@ const ChatBubble = () => {
 
     console.log('Making request to:', process.env.NEXT_PUBLIC_API_URL + '/chat');
     console.log('Using API key:', process.env.NEXT_PUBLIC_API_KEY);
+    console.log('Session ID:', sessionId);  // Add this log
 
     setMessages(prev => [...prev, { type: 'user', content: input }]);
     setInput('');
@@ -40,13 +42,21 @@ const ChatBubble = () => {
           'Content-Type': 'application/json',
           'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ 
+            message: input,
+            sessionId: sessionId  // Include sessionId if we have it
+        }),
       });
 
       console.log('Response status:', response.status);
 
       const data = await response.json();
       setMessages(prev => [...prev, { type: 'bot', content: data.message }]);
+        // Store the sessionId from the response if we get one
+        if (data.sessionId) {
+            console.log('Received sessionId:', data.sessionId);
+            setSessionId(data.sessionId);
+        }
     } catch (error) {
       console.error('Error:', error);
         // Add more detailed error logging
