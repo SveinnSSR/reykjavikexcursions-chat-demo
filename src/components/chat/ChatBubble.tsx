@@ -5,14 +5,33 @@ import React, { useState, useEffect } from 'react';
 import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
+// Define interfaces for better type safety
+interface Message {
+  type: 'user' | 'bot';
+  content: string;
+}
+
+interface ChatResponse {
+  message: string;
+  sessionId: string;
+  language: string;
+}
+
 const ChatBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Array<{type: 'user' | 'bot', content: string}>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
+  // Load session from localStorage and set initial message
   useEffect(() => {
+    const storedSessionId = localStorage.getItem('chatSessionId');
+    if (storedSessionId) {
+      console.log('Restored session:', storedSessionId);
+      setSessionId(storedSessionId);
+    }
+
     if (isOpen && messages.length === 0) {
       setMessages([
         {
@@ -27,42 +46,62 @@ const ChatBubble = () => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    console.log('Making request to:', process.env.NEXT_PUBLIC_API_URL + '/chat');
-    console.log('Using API key:', process.env.NEXT_PUBLIC_API_KEY);
-    console.log('Session ID:', sessionId);  // Add this log
+    const currentInput = input.trim();
+    const currentSessionId = sessionId;
 
-    setMessages(prev => [...prev, { type: 'user', content: input }]);
+    console.log('Making request to:', process.env.NEXT_PUBLIC_API_URL + '/chat');
+    console.log('Using session ID:', currentSessionId);
+
+    setMessages(prev => [...prev, { type: 'user', content: currentInput }]);
     setInput('');
     setIsLoading(true);
 
     try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/chat', {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
         },
         body: JSON.stringify({ 
-            message: input,
-            sessionId: sessionId  // Include sessionId if we have it
+          message: currentInput,
+          sessionId: currentSessionId
         }),
       });
 
       console.log('Response status:', response.status);
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: ChatResponse = await response.json();
+      
+      // Store new sessionId if we get one
+      if (data.sessionId && (!currentSessionId || currentSessionId !== data.sessionId)) {
+        console.log('Setting new session ID:', data.sessionId);
+        setSessionId(data.sessionId);
+        localStorage.setItem('chatSessionId', data.sessionId);
+      }
+
       setMessages(prev => [...prev, { type: 'bot', content: data.message }]);
-        // Store the sessionId from the response if we get one
-        if (data.sessionId) {
-            console.log('Received sessionId:', data.sessionId);
-            setSessionId(data.sessionId);
-        }
     } catch (error) {
-      console.error('Error:', error);
-        // Add more detailed error logging
-        if (error instanceof Error) {
-            console.error('Error details:', error.message);
-        }
+      console.error('Chat request failed:', error);
+      
+      // Add error message to chat
+      setMessages(prev => [...prev, { 
+        type: 'bot', 
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment." 
+      }]);
+
+      // Detailed error logging
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          sessionId: currentSessionId
+        });
+      }
     } finally {
       setIsLoading(false);
     }
