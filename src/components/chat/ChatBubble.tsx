@@ -12,10 +12,18 @@ interface Message {
 }
 
 interface ChatContext {
-  lastTopic: string | null;
-  flightTime: string | null;
-  flightDestination: string | null;
-}
+    lastTopic: string | null;
+    flightTime: string | null;
+    flightDestination: string | null;
+    lastServiceType: string | null;
+    isGroupBooking: boolean;
+    groupDetails: {
+      adults: number;
+      youths: number;
+      children: number;
+    } | null;
+    lastQuery: string | null;
+  }
 
 interface ChatResponse {
   message: string;
@@ -33,7 +41,11 @@ const ChatBubble = () => {
   const [context, setContext] = useState<ChatContext>({
     lastTopic: null,
     flightTime: null,
-    flightDestination: null
+    flightDestination: null,
+    lastServiceType: null,
+    isGroupBooking: false,
+    groupDetails: null,
+    lastQuery: null
   });
   
     // Load session and context from localStorage
