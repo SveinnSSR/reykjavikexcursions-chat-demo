@@ -1,7 +1,9 @@
 // src/components/chat/ChatBubble.tsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
+"use client";
+
+import React, { useState, useEffect, ReactElement } from 'react';
 import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
@@ -23,7 +25,7 @@ interface ChatContext {
       children: number;
     } | null;
     lastQuery: string | null;
-  }
+}
 
 interface ChatResponse {
   message: string;
@@ -31,6 +33,37 @@ interface ChatResponse {
   language: string;
   context: ChatContext;
 }
+
+// Add this right after your interfaces
+const formatMessageContent = (content: string): ReactElement | string => {
+    const urlRegex = /https:\/\/www\.google\.com\/maps\/dir\/[-\d.,]+/g;
+    const parts = content.split(urlRegex);
+    
+    if (parts.length <= 1) return content;
+
+    const matches = content.match(urlRegex) || [];
+    
+    return (
+        <>
+            {parts.map((part, index) => (
+                <React.Fragment key={index}>
+                    {part}
+                    {matches[index] && (
+                        <a
+                            href={matches[index]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
+                            className="text-blue-500 hover:text-blue-700 underline"
+                        >
+                            View location on Google Maps 📍
+                        </a>
+                    )}
+                </React.Fragment>
+            ))}
+        </>
+    );
+};
 
 const ChatBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -244,7 +277,7 @@ const ChatBubble = () => {
                       '1px solid rgba(0, 0, 0, 0.05)'
                   }}
                 >
-                  {message.content}
+                  {message.type === 'bot' ? formatMessageContent(message.content) : message.content}
                 </div>
               </div>
             ))}
