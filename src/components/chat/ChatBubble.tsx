@@ -36,7 +36,7 @@ interface ChatResponse {
 
 // Add this right after your interfaces
 const formatMessageContent = (content: string): ReactElement | string => {
-    const urlRegex = /https:\/\/www\.google\.com\/maps\/dir\/[-\d.,]+/g;
+    const urlRegex = /https:\/\/www\.google\.com\/maps\/@[-\d.,z]+/g;
     const parts = content.split(urlRegex);
     
     if (parts.length <= 1) return content;
