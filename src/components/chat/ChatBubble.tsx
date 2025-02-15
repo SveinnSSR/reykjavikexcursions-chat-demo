@@ -36,33 +36,47 @@ interface ChatResponse {
 
 // Add this right after your interfaces
 const formatMessageContent = (content: string): ReactElement | string => {
+    // Split content into paragraphs and handle URLs
     const urlRegex = /https:\/\/www\.google\.com\/maps\/[^"\s]+/g;
-    const parts = content.split(urlRegex);
-    
-    if (parts.length <= 1) return content;
+    const paragraphs = content.split('\n\n').filter(Boolean);
 
-    const matches = content.match(urlRegex) || [];
-    
-    return (
-        <>
-            {parts.map((part, index) => (
-                <React.Fragment key={index}>
-                    {part}
-                    {matches[index] && (
-                        <a
-                            href={matches[index]}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
-                            className="text-blue-500 hover:text-blue-700 underline"
-                        >
-                            View location on Google Maps 📍
-                        </a>
-                    )}
-                </React.Fragment>
-            ))}
-        </>
-    );
+    // If no paragraphs and no urls, return as is
+    if (paragraphs.length <= 1 && !content.includes('https://www.google.com/maps/')) {
+        return content;
+    }
+
+    // Process paragraphs with URLs
+    const processedParagraphs = paragraphs.map((paragraph, index) => {
+        const parts = paragraph.split(urlRegex);
+        const matches = paragraph.match(urlRegex) || [];
+
+        if (parts.length <= 1) {
+            return <p key={index} className="mb-4">{paragraph}</p>;
+        }
+
+        return (
+            <p key={index} className="mb-4">
+                {parts.map((part, partIndex) => (
+                    <React.Fragment key={partIndex}>
+                        {part}
+                        {matches[partIndex] && (
+                            <a 
+                                href={matches[partIndex]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-blue-500 hover:text-blue-700 underline"
+                            >
+                                View location on Google Maps 📍
+                            </a>
+                        )}
+                    </React.Fragment>
+                ))}
+            </p>
+        );
+    });
+
+    return <>{processedParagraphs}</>;
 };
 
 const ChatBubble = () => {
@@ -265,7 +279,7 @@ const ChatBubble = () => {
                   </div>
                 )}
                 <div
-                  className={`max-w-[70%] px-4 py-3 rounded-2xl ${
+                  className={`max-w-[70%] px-4 py-3 rounded-2xl whitespace-pre-line ${
                     message.type === 'user'
                       ? 'bg-[#4AA19E] text-white ml-4'
                       : 'bg-white text-gray-800'
