@@ -1,9 +1,7 @@
 // src/components/chat/ChatBubble.tsx
 "use client";
 
-"use client";
-
-import React, { useState, useEffect, ReactElement } from 'react';
+import React, { useState, useEffect, ReactElement, useRef } from 'react';
 import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
@@ -85,6 +83,7 @@ const ChatBubble = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [context, setContext] = useState<ChatContext>({
     lastTopic: null,
     flightTime: null,
@@ -94,108 +93,117 @@ const ChatBubble = () => {
     groupDetails: null,
     lastQuery: null
   });
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
   
-    // Load session and context from localStorage
-    useEffect(() => {
-      const storedSessionId = localStorage.getItem('chatSessionId');
-      const storedContext = localStorage.getItem('chatContext');
-      
-      if (storedSessionId) {
-        console.log('Restored session:', storedSessionId);
-        setSessionId(storedSessionId);
-      }
-      
-      if (storedContext) {
-        try {
-          const parsedContext = JSON.parse(storedContext);
-          console.log('Restored context:', parsedContext);
-          setContext(parsedContext);
-        } catch (e) {
-          console.error('Error parsing stored context:', e);
-        }
-      }
-  
-      if (isOpen && messages.length === 0) {
-        setMessages([
-          {
-            type: 'bot',
-            content: "Hello! I'm your AI assistant at Reykjavík Excursions. I can help you with Flybus airport transfers, schedules, and bookings. What would you like to know? 😊"
-          }
-        ]);
-      }
-    }, [isOpen, messages.length]);
-  
-    // Update handleSubmit
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!input.trim()) return;
-  
-      const currentInput = input.trim();
-      const currentSessionId = sessionId;
-  
-      console.log('Making request with:', {
-        sessionId: currentSessionId,
-        context: context,
-        input: currentInput
-      });
-  
-      setMessages(prev => [...prev, { type: 'user', content: currentInput }]);
-      setInput('');
-      setIsLoading(true);
-  
+  // Load session and context from localStorage
+  useEffect(() => {
+    const storedSessionId = localStorage.getItem('chatSessionId');
+    const storedContext = localStorage.getItem('chatContext');
+    
+    if (storedSessionId) {
+      console.log('Restored session:', storedSessionId);
+      setSessionId(storedSessionId);
+    }
+    
+    if (storedContext) {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
-          },
-          body: JSON.stringify({ 
-            message: currentInput,
-            sessionId: currentSessionId
-          }),
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data: ChatResponse = await response.json();
-        
-        // Store new sessionId and context
-        if (data.sessionId && (!currentSessionId || currentSessionId !== data.sessionId)) {
-          console.log('Setting new session ID:', data.sessionId);
-          setSessionId(data.sessionId);
-          localStorage.setItem('chatSessionId', data.sessionId);
-        }
-  
-        if (data.context) {
-          console.log('Updating context:', data.context);
-          setContext(data.context);
-          localStorage.setItem('chatContext', JSON.stringify(data.context));
-        }
-  
-        setMessages(prev => [...prev, { type: 'bot', content: data.message }]);
-      } catch (error) {
-        console.error('Chat request failed:', error);
-        
-        setMessages(prev => [...prev, { 
-          type: 'bot', 
-          content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment." 
-        }]);
-  
-        if (error instanceof Error) {
-          console.error('Error details:', {
-            message: error.message,
-            stack: error.stack,
-            sessionId: currentSessionId,
-            context: context
-          });
-        }
-      } finally {
-        setIsLoading(false);
+        const parsedContext = JSON.parse(storedContext);
+        console.log('Restored context:', parsedContext);
+        setContext(parsedContext);
+      } catch (e) {
+        console.error('Error parsing stored context:', e);
       }
-    };
+    }
+
+    if (isOpen && messages.length === 0) {
+      setMessages([
+        {
+          type: 'bot',
+          content: "Hello! I'm your AI assistant at Reykjavík Excursions. I can help you with Flybus airport transfers, schedules, and bookings. What would you like to know? 😊"
+        }
+      ]);
+    }
+  }, [isOpen, messages.length]);
+
+  // Update handleSubmit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const currentInput = input.trim();
+    const currentSessionId = sessionId;
+
+    console.log('Making request with:', {
+      sessionId: currentSessionId,
+      context: context,
+      input: currentInput
+    });
+
+    setMessages(prev => [...prev, { type: 'user', content: currentInput }]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
+        },
+        body: JSON.stringify({ 
+          message: currentInput,
+          sessionId: currentSessionId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: ChatResponse = await response.json();
+      
+      // Store new sessionId and context
+      if (data.sessionId && (!currentSessionId || currentSessionId !== data.sessionId)) {
+        console.log('Setting new session ID:', data.sessionId);
+        setSessionId(data.sessionId);
+        localStorage.setItem('chatSessionId', data.sessionId);
+      }
+
+      if (data.context) {
+        console.log('Updating context:', data.context);
+        setContext(data.context);
+        localStorage.setItem('chatContext', JSON.stringify(data.context));
+      }
+
+      setMessages(prev => [...prev, { type: 'bot', content: data.message }]);
+    } catch (error) {
+      console.error('Chat request failed:', error);
+      
+      setMessages(prev => [...prev, { 
+        type: 'bot', 
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment." 
+      }]);
+
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          sessionId: currentSessionId,
+          context: context
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
@@ -306,6 +314,7 @@ const ChatBubble = () => {
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} /> {/* Add this invisible div at the bottom */}
           </div>
 
           {/* Input */}
